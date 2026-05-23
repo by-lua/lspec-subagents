@@ -14,100 +14,26 @@ import { join } from "node:path";
 import { getAgentDir } from "@mariozechner/pi-coding-agent";
 
 export interface ModelConfig {
-  /** Map of agent name → model string (e.g. "CODING-ADVANCED" or "provider/modelId") */
+  /** Map of agent name → model string (e.g. "claude-sonnet-4" or "provider/modelId") */
   agents: Record<string, string>;
 }
 
-/** Embedded defaults — used when no config file exists. */
+/** Embedded defaults — used when no config file exists. Using generic models as reference. */
 const EMBEDDED_DEFAULTS: ModelConfig = {
   agents: {
-    orchestrator: "CODING-ADVANCED",
-    explorer: "CODING-BASIC",
-    librarian: "CODING-ADVANCED",
-    oracle: "CODING-ELITE",
-    designer: "CODING-ADVANCED",
-    fixer: "CODING-ADVANCED",
-    observer: "CODING-BASIC",
-    council: "CODING-ELITE",
-    councillor: "CODING-BASIC",
+    orchestrator: "claude-sonnet-4",
+    explorer: "gpt-4o-mini",
+    librarian: "claude-sonnet-4",
+    oracle: "claude-opus-4",
+    designer: "claude-sonnet-4",
+    fixer: "claude-sonnet-4",
+    observer: "gpt-4o-mini",
+    council: "claude-opus-4",
+    councillor: "gpt-4o-mini",
   },
 };
 
 /** The placeholder marker prefix/suffix used in default-agents.ts */
-export const MODEL_PLACEHOLDER_PREFIX = "{{model:";
-export const MODEL_PLACEHOLDER_SUFFIX = "}}";
-
-/**
- * Check if a model string is a placeholder like "{{model:explorer}}"
- */
-export function isModelPlaceholder(model: string): boolean {
-  return model.startsWith(MODEL_PLACEHOLDER_PREFIX) && model.endsWith(MODEL_PLACEHOLDER_SUFFIX);
-}
-
-/**
- * Extract agent name from a placeholder like "{{model:explorer}}" → "explorer"
- */
-export function parseModelPlaceholder(model: string): string | null {
-  if (!isModelPlaceholder(model)) return null;
-  return model.slice(MODEL_PLACEHOLDER_PREFIX.length, -MODEL_PLACEHOLDER_SUFFIX.length);
-}
-
-/**
- * Load model config from disk, merging global + project overrides.
- * Returns the merged config.
- */
-export function loadModelConfig(cwd: string): ModelConfig {
-  const config = structuredClone(EMBEDDED_DEFAULTS) as ModelConfig;
-  const globalDir = join(getAgentDir());
-  const projectDir = join(cwd, ".pi");
-
-  // Load global config (lower priority)
-  const globalPath = join(globalDir, "lspec-model-config.json");
-  loadAndMerge(globalPath, config);
-
-  // Load project config (higher priority — overwrites)
-  const projectPath = join(projectDir, "lspec-model-config.json");
-  loadAndMerge(project MyApologies for the interruption — it looks like I got cut off mid-function. Let me complete the model-config-loader correctly and also re-check the agent-types flow before making changes.
-
-Let me step back and write all files carefully:
-
-<｜DSML｜tool_calls>
-<｜DSML｜invoke name="write_file">
-<｜DSML｜parameter name="content" string="true">/**
- * model-config-loader.ts — Load centralized model configuration for L-Spec subagents.
- *
- * Inspired by oh-my-opencode-slim's model config approach.
- *
- * Resolution order (highest priority wins):
- *   1. Project:  <cwd>/.pi/lspec-model-config.json
- *   2. Global:   ~/.pi/agent/lspec-model-config.json
- *   3. Embedded: hardcoded defaults in this file
- */
-
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { getAgentDir } from "@mariozechner/pi-coding-agent";
-
-export interface ModelConfig {
-  /** Map of agent name → model string (e.g. "CODING-ADVANCED" or "provider/modelId") */
-  agents: Record<string, string>;
-}
-
-/** Embedded defaults — used when no config file exists. */
-const EMBEDDED_DEFAULTS: ModelConfig = {
-  agents: {
-    orchestrator: "CODING-ADVANCED",
-    explorer: "CODING-BASIC",
-    librarian: "CODING-ADVANCED",
-    oracle: "CODING-ELITE",
-    designer: "CODING-ADVANCED",
-    fixer: "CODING-ADVANCED",
-    observer: "CODING-BASIC",
-    council: "CODING-ELITE",
-    councillor: "CODING-BASIC",
-  },
-};
-
 export const MODEL_PLACEHOLDER_PREFIX = "{{model:";
 export const MODEL_PLACEHOLDER_SUFFIX = "}}";
 
@@ -202,4 +128,13 @@ function loadAndMerge(path: string, config: ModelConfig): void {
   } catch {
     // Silently ignore malformed config files
   }
+}
+
+/** Re-export for convenience — returns a fully resolved model for an agent. */
+export function getModelForAgent(
+  agentName: string,
+  cwd: string
+): string | undefined {
+  const config = loadModelConfig(cwd);
+  return config.agents[agentName];
 }

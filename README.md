@@ -6,17 +6,17 @@ Substitui os 3 agentes padrão (general-purpose, Explore, Plan) por **9 agentes 
 
 ## Agentes
 
-| Agente | Função | Modelo Padrão |
-|---|---|---|
-| `orchestrator` | Coordenador central do fluxo L-Spec | CODING-ADVANCED |
-| `explorer` | Navegação rápida no codebase (read-only) | CODING-BASIC |
-| `librarian` | Pesquisa de docs externas e APIs | CODING-ADVANCED |
-| `oracle` | Arquiteto sênior, code review (read-only) | CODING-ELITE |
-| `designer` | UI/UX specialist | CODING-ADVANCED |
-| `fixer` | Implementador rápido de tarefas definidas | CODING-ADVANCED |
-| `observer` | Análise visual (imagens, PDFs, screenshots) | CODING-BASIC |
-| `council` | Consenso multi-modelo (spawna councillors) | CODING-ELITE |
-| `councillor` | Membro individual do conselho | CODING-BASIC |
+|| Agente | Função | Modelo Padrão (referência) |
+|---|---|---|---|
+|| `orchestrator` | Coordenador central do fluxo L-Spec | `claude-sonnet-4` (advanced) |
+|| `explorer` | Navegação rápida no codebase (read-only) | `gpt-4o-mini` (basic) |
+|| `librarian` | Pesquisa de docs externas e APIs | `claude-sonnet-4` (advanced) |
+|| `oracle` | Arquiteto sênior, code review (read-only) | `claude-opus-4` (elite) |
+|| `designer` | UI/UX specialist | `claude-sonnet-4` (advanced) |
+|| `fixer` | Implementador rápido de tarefas definidas | `claude-sonnet-4` (advanced) |
+|| `observer` | Análise visual (imagens, PDFs, screenshots) | `gpt-4o-mini` (basic, vision-capable) |
+|| `council` | Consenso multi-modelo (spawna councillors) | `claude-opus-4` (elite) |
+|| `councillor` | Membro individual do conselho | `gpt-4o-mini` (basic) |
 
 ## Configuração Centralizada de Modelos
 
@@ -32,26 +32,26 @@ Crie `lspec-model-config.json` em:
 ```json
 {
   "agents": {
-    "orchestrator": "CODING-ADVANCED",
-    "explorer": "CODING-BASIC",
-    "librarian": "CODING-ADVANCED",
-    "oracle": "CODING-ELITE",
-    "designer": "CODING-ADVANCED",
-    "fixer": "CODING-ADVANCED",
-    "observer": "CODING-BASIC",
-    "council": "CODING-ELITE",
-    "councillor": "CODING-BASIC"
+    "orchestrator": "claude-sonnet-4",
+    "explorer": "gpt-4o-mini",
+    "librarian": "claude-sonnet-4",
+    "oracle": "claude-opus-4",
+    "designer": "claude-sonnet-4",
+    "fixer": "claude-sonnet-4",
+    "observer": "gpt-4o-mini",
+    "council": "claude-opus-4",
+    "councillor": "gpt-4o-mini"
   }
 }
 ```
 
-Pode usar qualquer modelo disponível no seu PI, ex: `"anthropic/claude-sonnet-4"`, `"openai/gpt-4o"`, `"CODING-ADVANCED"`, etc.
+Pode usar qualquer modelo disponível no seu provedor, ex: `"anthropic/claude-sonnet-4"`, `"openai/gpt-4o"`, etc. O observer usa um modelo com **visão** (`gpt-4o-mini` no exemplo) pra analisar screenshots.
 
 ### Ordem de resolução
 
 1. Projeto (`.pi/lspec-model-config.json`) — **maior prioridade**
 2. Global (`~/.pi/agent/lspec-model-config.json`)
-3. Defaults embutidos (CODING-*)
+3. Defaults embutidos (claude-sonnet-4, gpt-4o-mini, claude-opus-4)
 
 ## Instalação
 
@@ -76,7 +76,6 @@ Ou customize agentes `.md` em `.pi/agents/` para sobrescrever os defaults.
 
 ## Diferenças do pi-subagents original
 
-- ❌ **Provider Ominiroute removido** — vc configura manualmente
 - ✅ **9 agentes** em vez de 3
 - ✅ **Placeholders de modelo** (`{{model:orchestrator}}`)
 - ✅ **Config JSON centralizada** (projeto + global + defaults)

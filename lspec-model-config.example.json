@@ -2,15 +2,16 @@
   "_note": "L-Spec Model Config — centralized model assignment for all subagents.",
   "_docs": "Place this file at .pi/lspec-model-config.json (project) or ~/.pi/agent/lspec-model-config.json (global).",
   "_override_order": "project > global > embedded defaults",
+  "_usage": "Replace the example models with whatever your provider supports. Observer needs vision capability.",
   "agents": {
-    "orchestrator": "CODING-ADVANCED",
-    "explorer": "CODING-BASIC",
-    "librarian": "CODING-ADVANCED",
-    "oracle": "CODING-ELITE",
-    "designer": "CODING-ADVANCED",
-    "fixer": "CODING-ADVANCED",
-    "observer": "CODING-BASIC",
-    "council": "CODING-ELITE",
-    "councillor": "CODING-BASIC"
+    "orchestrator": "claude-sonnet-4",
+    "explorer": "gpt-4o-mini",
+    "librarian": "claude-sonnet-4",
+    "oracle": "claude-opus-4",
+    "designer": "claude-sonnet-4",
+    "fixer": "claude-sonnet-4",
+    "observer": "gpt-4o-mini",
+    "council": "claude-opus-4",
+    "councillor": "gpt-4o-mini"
   }
 }
