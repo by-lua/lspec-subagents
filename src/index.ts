@@ -652,9 +652,10 @@ ${typeListText}
 
 Guidelines:
 - For parallel work, use run_in_background: true on each agent. Foreground calls run sequentially — only one executes at a time.
-- Use Explore for codebase searches and code understanding.
-- Use Plan for architecture and implementation planning.
-- Use general-purpose for complex tasks that need file editing.
+- Use orchestrator for complex tasks that need file editing.
+- Use fixer for well-defined implementation tasks.
+- Use explorer for codebase searches and code understanding.
+- Use oracle for architecture decisions and code review.
 - Provide clear, detailed prompts so the agent can work autonomously.
 - Agent results are returned as text — summarize them for the user.
 - Use run_in_background for work you don't need immediately. You will be notified when it completes.
@@ -820,7 +821,7 @@ Guidelines:
 
       const rawType = params.subagent_type as SubagentType;
       const resolved = resolveType(rawType);
-      const subagentType = resolved ?? "general-purpose";
+      const subagentType = resolved ?? "orchestrator";
       const fellBack = resolved === undefined;
 
       const displayName = getDisplayName(subagentType);
@@ -1100,7 +1101,7 @@ Guidelines:
       const details = buildDetails(detailBase, record, fgState, { tokens: tokenText });
 
       const fallbackNote = fellBack
-        ? `Note: Unknown agent type "${rawType}" — using general-purpose.\n\n`
+        ? `Note: Unknown agent type "${rawType}" — using orchestrator.\n\n`
         : "";
 
       if (record.status === "error") {

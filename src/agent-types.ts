@@ -3,9 +3,13 @@
  *
  * Merges embedded default agents with user-defined agents from .pi/agents/*.md.
  * User agents override defaults with the same name. Disabled agents are kept but excluded from spawning.
+ *
+ * L-Spec addition: model placeholders ({{model:agent_name}}) are resolved at registration
+ * from lspec-model-config.json via model-config-loader.ts.
  */
 
 import { DEFAULT_AGENTS } from "./default-agents.js";
+import { loadModelConfig, resolveAllPlaceholders } from "./model-config-loader.js";
 import type { AgentConfig } from "./types.js";
 
 /** All known built-in tool names. */
@@ -14,9 +18,13 @@ export const BUILTIN_TOOL_NAMES: string[] = ["read", "bash", "edit", "write", "g
 /** Unified runtime registry of all agents (defaults + user-defined). */
 const agents = new Map<string, AgentConfig>();
 
+/** Cached model config, loaded once per session. */
+let modelConfig = loadModelConfig(process.cwd());
+
 /**
  * Register agents into the unified registry.
  * Starts with DEFAULT_AGENTS, then overlays user agents (overrides defaults with same name).
+ * Model placeholders ({{model:name}}) are resolved from lspec-model-config.json.
  * Disabled agents (enabled === false) are kept in the registry but excluded from spawning.
  */
 export function registerAgents(userAgents: Map<string, AgentConfig>): void {
@@ -31,6 +39,23 @@ export function registerAgents(userAgents: Map<string, AgentConfig>): void {
   for (const [name, config] of userAgents) {
     agents.set(name, config);
   }
+
+  // Resolve model placeholders against the model config
+  // This replaces {{model:orchestrator}} etc. with actual model strings
+  reloadModelConfig();
+  resolveAllPlaceholders(agents, modelConfig);
+}
+
+/**
+ * Reload the model config from disk (in case it changed since session start).
+ */
+export function reloadModelConfig(cwd?: string): void {
+  modelConfig = loadModelConfig(cwd ?? process.cwd());
+}
+
+/** Get the current model config (for UI display / debugging). */
+export function getModelConfig() {
+  return modelConfig;
 }
 
 /** Case-insensitive key resolution. */
@@ -161,4 +186,3 @@ export function getConfig(type: string): {
     promptMode: "append",
   };
 }
-

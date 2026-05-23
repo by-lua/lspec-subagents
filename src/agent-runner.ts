@@ -228,7 +228,7 @@ export async function runAgent(
   } else {
     // Unknown type fallback: spread the canonical general-purpose config (defensive —
     // unreachable in practice since index.ts resolves unknown types before calling runAgent).
-    const fallback = DEFAULT_AGENTS.get("general-purpose");
+    const fallback = DEFAULT_AGENTS.get("orchestrator");
     if (!fallback) throw new Error(`No fallback config available for unknown type "${type}"`);
     systemPrompt = buildAgentPrompt({ ...fallback, name: type }, effectiveCwd, env, parentSystemPrompt, extras);
   }

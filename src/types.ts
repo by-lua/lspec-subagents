@@ -11,8 +11,11 @@ export type { ThinkingLevel };
 /** Agent type: any string name (built-in defaults or user-defined). */
 export type SubagentType = string;
 
-/** Names of the three embedded default agents. */
-export const DEFAULT_AGENT_NAMES = ["general-purpose", "Explore", "Plan"] as const;
+/** Names of the 9 embedded L-Spec default agents. */
+export const DEFAULT_AGENT_NAMES = [
+  "orchestrator", "explorer", "librarian", "oracle", "designer",
+  "fixer", "observer", "council", "councillor",
+] as const;
 
 /** Memory scope for persistent agent memory. */
 export type MemoryScope = "user" | "project" | "local";

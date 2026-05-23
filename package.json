@@ -1,24 +1,23 @@
 {
-  "name": "@tintinweb/pi-subagents",
-  "version": "0.7.3",
-  "description": "A pi extension extension that brings smart Claude Code-style autonomous sub-agents to pi.",
-  "author": "tintinweb",
+  "name": "@lspec/subagents",
+  "version": "0.1.0",
+  "description": "L-Spec Subagents — 9 specialized agents for PI.dev with centralized model config (inspired by oh-my-opencode-slim). Forked from @tintinweb/pi-subagents.",
+  "author": "L-Spec",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tintinweb/pi-subagents.git"
+    "url": "https://github.com/lua/lspec-subagents.git"
   },
-  "homepage": "https://github.com/tintinweb/pi-subagents#readme",
-  "bugs": {
-    "url": "https://github.com/tintinweb/pi-subagents/issues"
-  },
+  "homepage": "https://github.com/lua/lspec-subagents#readme",
   "keywords": [
     "pi-package",
     "pi",
     "pi-extension",
     "subagent",
     "agent",
-    "autonomous"
+    "autonomous",
+    "lspec",
+    "sdd"
   ],
   "peerDependencies": {
     "@mariozechner/pi-ai": ">=0.70.5",
@@ -32,12 +31,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build",
     "test": "vitest run",
-    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "lint": "biome check src/ test/",
-    "lint:fix": "biome check --fix src/ test/"
+    "lint": "biome check src/ test/"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
@@ -49,7 +45,6 @@
     "extensions": [
       "./src/index.ts"
     ],
-    "video": "https://github.com/tintinweb/pi-subagents/raw/master/media/demo.mp4",
-    "image": "https://github.com/tintinweb/pi-subagents/raw/master/media/screenshot.png"
+    "image": "https://raw.githubusercontent.com/lua/lspec-subagents/main/media/screenshot.png"
   }
 }
