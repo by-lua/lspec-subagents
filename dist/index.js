@@ -500,8 +500,7 @@ export default function (pi) {
             ctx.ui.setTitle("L-Spec Orchestrator");
             // Show a persistent widget above the editor
             ctx.ui.setWidget("lspec-orchestrator", [
-                "🎛️ L-Spec Orchestrator",
-                "  agentes: explorer · librarian · oracle · designer · fixer · observer · council",
+                "▸ L-Spec Orchestrator",
             ], { placement: "aboveEditor" });
         }
     });
