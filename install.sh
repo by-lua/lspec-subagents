@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # @lspec/subagents — Instalador
 # Uso: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash
-# Requer: git, node, npm
+# Requer: git, pi (PI.dev)
 
 set -uo pipefail
 
@@ -15,7 +15,6 @@ REPO="https://github.com/by-lua/lspec-subagents.git"
 
 PI_AGENTS_DIR="$HOME/.pi/agents"
 PI_AGENT_DIR="$HOME/.pi/agent"
-PI_NPM_DIR="$PI_AGENT_DIR/npm"
 
 echo ""
 echo -e "${BLUE}╔═════════════════════════════════╗${NC}"
@@ -23,16 +22,22 @@ echo -e "${BLUE}║   @lspec/subagents — Instalador ║${NC}"
 echo -e "${BLUE}╚═════════════════════════════════╝${NC}"
 echo ""
 
-# ── Passo 1: Instalar extensão oficial via npm ──
-echo -e "${BLUE}→ Instalando extensão @tintinweb/pi-subagents via npm...${NC}"
-mkdir -p "$PI_NPM_DIR"
-cd "$PI_NPM_DIR"
-
-if ! npm install @tintinweb/pi-subagents@0.7.3 2>/dev/null; then
-    echo -e "${RED}✗ Erro ao instalar via npm. Node/npm instalados?${NC}"
+# ── Passo 1: Instalar extensão via pi install ──
+echo -e "${BLUE}→ Instalando extensão @tintinweb/pi-subagents...${NC}"
+if command -v pi &>/dev/null; then
+    pi install npm:@tintinweb/pi-subagents 2>/dev/null
+elif [[ -d "$HOME/.pi/agent/npm" ]]; then
+    cd "$HOME/.pi/agent/npm" && npm install @tintinweb/pi-subagents@0.7.3 2>/dev/null
+else
+    echo -e "${RED}✗ PI não encontrado. Instale em https://pi.dev${NC}"
     exit 1
 fi
-echo -e "  ${GREEN}✓${NC} Extensão instalada (node_modules/@tintinweb/pi-subagents)"
+
+if [[ ! -d "$HOME/.pi/agent/npm/node_modules/@tintinweb/pi-subagents" ]]; then
+    echo -e "${RED}✗ Extensão não instalou. Verifique pi install.${NC}"
+    exit 1
+fi
+echo -e "  ${GREEN}✓${NC} Extensão instalada (registra /agents no PI)"
 
 # ── Passo 2: Remover agentes padrão ──
 echo -e "${BLUE}→ Removendo agentes padrão...${NC}"
@@ -77,10 +82,10 @@ if [[ -f "$REPO_DIR/lspec-model-config.example.json" ]]; then
 fi
 
 echo ""
-echo -e "${GREEN}✓ @lspec/subagents instalado!${NC} ($agent_count agentes | extensão via npm)"
+echo -e "${GREEN}✓ @lspec/subagents instalado!${NC} ($agent_count agentes | extensão via pi install)"
 echo ""
 echo "Agentes: orchestrator | explorer | librarian | oracle | designer | fixer | observer | council | councillor"
-echo "Extensão: node_modules/@tintinweb/pi-subagents"
+echo "Extensão: pi install npm:@tintinweb/pi-subagents"
 echo "Config:   ~/.pi/agent/lspec-model-config.json"
 echo "Atualizar: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash"
 echo ""

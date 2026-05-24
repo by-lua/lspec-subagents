@@ -60,11 +60,11 @@ curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install
 ```
 
 O instalador faz **3 passos**:
-1. `npm install @tintinweb/pi-subagents` — instala a extensão oficial (registra o `/agents` no PI)
+1. `pi install npm:@tintinweb/pi-subagents` — instala a extensão oficial (registra o `/agents` no PI)
 2. Remove os 3 agentes padrão (general-purpose, Explore, Plan)
 3. Copia os 9 agentes L-Spec (`.md`) pra `~/.pi/agents/` + cria `lspec-model-config.json` (se não existir)
 
-Requer: `git`, `node`, `npm`.
+Requer: `git`, `pi` (PI.dev).
 
 ### Atualizar
 
@@ -72,7 +72,7 @@ Requer: `git`, `node`, `npm`.
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash
 ```
 
-Reinstala a extensão npm (pega versão mais recente), remove padrão, reinstala agentes L-Spec. Preserva `lspec-model-config.json`.
+Reinstala a extensão via `pi install` (pega versão mais recente), remove padrão, reinstala agentes L-Spec. Preserva `lspec-model-config.json`.
 
 ### Desinstalar
 
@@ -84,14 +84,14 @@ Remove os 9 agentes `.md` L-Spec. A extensão npm e a config são preservadas.
 
 Para remover tudo:
 ```bash
-npm uninstall @tintinweb/pi-subagents  # remove extensão
-rm ~/.pi/agent/lspec-model-config.json  # remove config
+pi uninstall npm:@tintinweb/pi-subagents  # remove extensão
+rm ~/.pi/agent/lspec-model-config.json     # remove config
 ```
 
 ### Instalação manual
 
 ```bash
-cd ~/.pi/agent/npm && npm install @tintinweb/pi-subagents@0.7.3  # extensão
+pi install npm:@tintinweb/pi-subagents@0.7.3              # extensão
 rm ~/.pi/agents/{general-purpose,Explore,Plan}.md 2>/dev/null     # padrão
 git clone --depth 1 https://github.com/by-lua/lspec-subagents.git /tmp/lspec-sub
 cp /tmp/lspec-sub/.pi/agents/*.md ~/.pi/agents/                   # nossos

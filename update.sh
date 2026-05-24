@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # @lspec/subagents — Atualizador
 # Uso: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash
-# Requer: git, node, npm
+# Requer: git, pi (PI.dev)
 
 set -uo pipefail
 
@@ -15,7 +15,6 @@ REPO="https://github.com/by-lua/lspec-subagents.git"
 
 PI_AGENTS_DIR="$HOME/.pi/agents"
 PI_AGENT_DIR="$HOME/.pi/agent"
-PI_NPM_DIR="$PI_AGENT_DIR/npm"
 
 echo ""
 echo -e "${BLUE}╔══════════════════════════════════╗${NC}"
@@ -23,15 +22,20 @@ echo -e "${BLUE}║   @lspec/subagents — Atualizador ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════╝${NC}"
 echo ""
 
-# ── Reinstalar extensão oficial (pega versão mais recente) ──
+# ── Reinstalar extensão ──
 echo -e "${BLUE}→ Reinstalando extensão @tintinweb/pi-subagents...${NC}"
-mkdir -p "$PI_NPM_DIR"
-cd "$PI_NPM_DIR"
-npm install @tintinweb/pi-subagents@0.7.3 2>/dev/null || {
-    echo -e "${RED}✗ Erro ao reinstalar via npm.${NC}"; exit 1; }
+if command -v pi &>/dev/null; then
+    pi install npm:@tintinweb/pi-subagents 2>/dev/null
+elif [[ -d "$HOME/.pi/agent/npm" ]]; then
+    cd "$HOME/.pi/agent/npm" && npm install @tintinweb/pi-subagents@0.7.3 2>/dev/null
+fi
+
+if [[ ! -d "$HOME/.pi/agent/npm/node_modules/@tintinweb/pi-subagents" ]]; then
+    echo -e "${RED}✗ Extensão não reinstalou.${NC}"; exit 1
+fi
 echo -e "  ${GREEN}✓${NC} Extensão atualizada"
 
-# ── Remover agentes padrão (podem voltar no npm install) ──
+# ── Remover agentes padrão (podem voltar no pi install) ──
 default_agents=("general-purpose" "Explore" "Plan")
 for agent in "${default_agents[@]}"; do
     if [[ -f "$PI_AGENTS_DIR/${agent}.md" ]]; then
