@@ -53,14 +53,35 @@ Pode usar qualquer modelo disponível no seu provedor, ex: `"anthropic/claude-so
 2. Global (`~/.pi/agent/lspec-model-config.json`)
 3. Defaults embutidos (claude-sonnet-4, gpt-4o-mini, claude-opus-4)
 
-## Instalação
+## Instalação rápida
 
 ```bash
-# Via npm (quando publicado)
-pi install npm:@lspec/subagents
+curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash
+```
 
-# Local (tar.gz)
-pi install /caminho/para/lspec-subagents.tar.gz
+Instala em `~/.pi/agents/` (9 agentes `.md`) e `~/.pi/agent/lspec-model-config.json` (se não existir).
+
+### Atualizar
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash
+```
+
+Desinstala a versão anterior e instala a mais recente. Preserva `lspec-model-config.json`.
+
+### Desinstalar
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/uninstall.sh | bash
+```
+
+Remove os 9 agentes. A config de modelos é preservada — para remover: `rm ~/.pi/agent/lspec-model-config.json`
+
+### Instalação manual
+
+```bash
+git clone https://github.com/by-lua/lspec-subagents.git ~/.lspec-subagents
+cd ~/.lspec-subagents && bash install.sh
 ```
 
 ## Como usar
