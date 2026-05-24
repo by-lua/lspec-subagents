@@ -464,6 +464,39 @@ export default function (pi: ExtensionAPI) {
     }
   }
 
+  // ── Orchestrator Harness: inject coordinator prompt into main PI agent ──
+  // Like gentle-pi / oh-my-opencode-slim: the main PI session IS the orchestrator.
+  // This hook prepends the orchestrator's coordination instructions to every turn's
+  // system prompt so the PI always knows to delegate multi-step work.
+  pi.on("before_agent_start", async (event, _ctx) => {
+    const harnessPrompt = [
+      "## L-Spec Orchestrator Harness",
+      "",
+      "You are running inside the L-Spec orchestrator harness. Your PRIMARY job is to COORDINATE, not execute directly.",
+      "",
+      "### Mandatory Delegation Rules",
+      "- For ANY task with 2+ steps or 2+ distinct responsibilities → ALWAYS use the Agent tool with type=\"orchestrator\"",
+      "- NEVER do multi-step work yourself. Delegate to the orchestrator, who then delegates to specialist agents.",
+      "- You may execute directly ONLY for: single quick answers, single file edits, simple Q&A, or continuing context you already have.",
+      "",
+      "### Available Specialist Agents (via the orchestrator)",
+      "- explorer: fast codebase navigation (read-only)",
+      "- librarian: external docs and API references",
+      "- oracle: strategic advisor, code reviewer, architect",
+      "- designer: UI/UX specialist (read/write)",
+      "- fixer: fast execution for well-defined tasks (read/write/edit/bash)",
+      "- observer: visual analysis for images, PDFs, diagrams",
+      "- council: multi-LLM consensus engine",
+      "",
+      "### Example — User asks: \"Create a STATUS.md with file list, line counts, and improvement suggestions\"",
+      "→ WRONG: Do it all yourself (read files, count lines, write STATUS.md)",
+      "→ RIGHT: Call Agent with type=\"orchestrator\" and task: \"Create STATUS.md with: 1) list all .ts files, 2) line counts, 3) improvement suggestions for top 2\"",
+      "",
+    ].join("\n");
+
+    return { systemPrompt: harnessPrompt + "\n\n" + event.systemPrompt };
+  });
+
   // Capture ctx from session_start for RPC spawn handler + start the scheduler.
   pi.on("session_start", async (_event, ctx) => {
     currentCtx = ctx;
