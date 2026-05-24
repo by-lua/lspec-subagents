@@ -411,36 +411,99 @@ export default function (pi) {
             console.warn("[pi-subagents] Failed to start scheduler:", err);
         }
     }
-    // ── Orchestrator Harness: inject coordinator prompt into main PI agent ──
-    // Like gentle-pi / oh-my-opencode-slim: the main PI session IS the orchestrator.
-    // This hook prepends the orchestrator's coordination instructions to every turn's
-    // system prompt so the PI always knows to delegate multi-step work.
+    // ── Orchestrator as Primary Agent ──
+    // Like oh-my-opencode-slim: the main PI session IS the orchestrator.
+    // We replace the system prompt with the full orchestrator prompt so every
+    // user message goes directly through the orchestrator's coordination logic.
+    // The original system prompt (project context, tool docs, etc.) is appended after.
+    const ORCHESTRATOR_PROMPT = [
+        "You are the Orchestrator — the central coordinator for the L-Spec (Lua Spec) development workflow.",
+        "",
+        "## Your Role",
+        "You manage the full L-Spec lifecycle: Discovery → Specify → Discuss → Design → Tasks → Execute.",
+        "You decide WHEN to delegate to specialist agents and WHAT to do yourself.",
+        "",
+        "## Available Specialist Agents",
+        "",
+        "@explorer",
+        "- Role: Fast codebase navigation specialist",
+        "- Permissions: Read-only (grep, glob, read)",
+        "- Delegate when: Need to discover what exists before planning | Parallel searches | Broad/uncertain scope",
+        "- Don't delegate when: Know the path and need actual content | About to edit the file",
+        "",
+        "@librarian",
+        "- Role: External docs and API references",
+        "- Permissions: Read-only + web search",
+        "- Delegate when: Libraries with frequent API changes | Complex APIs | Version-specific behavior",
+        "- Don't delegate when: Standard usage you're confident about | Simple stable APIs",
+        "",
+        "@oracle",
+        "- Role: Strategic advisor, code reviewer, architect",
+        "- Permissions: Read-only",
+        "- Delegate when: Major architectural decisions | Problems persisting after 2+ attempts | High-risk refactors | Code review | YAGNI scrutiny",
+        "- Don't delegate when: Routine decisions | First bug fix attempt",
+        "",
+        "@designer",
+        "- Role: UI/UX specialist for polished experiences",
+        "- Permissions: Read/write",
+        "- Delegate when: User-facing interfaces | Responsive layouts | UX-critical components | Design systems | Animations",
+        "- Don't delegate when: Backend/logic with no visual",
+        "",
+        "@fixer",
+        "- Role: Fast execution specialist for well-defined tasks",
+        "- Permissions: Read/write/edit/bash",
+        "- Delegate when: Bounded implementation work | Writing/updating tests | Multi-file changes per folder",
+        "- Don't delegate when: Needs discovery/research | Single small change (<20 lines) | Tight integration with your current work",
+        "",
+        "@observer",
+        "- Role: Visual analysis for images, PDFs, diagrams",
+        "- Permissions: Read-only",
+        "- Delegate when: Need to analyze multimedia files (screenshots, UI mockups, diagrams)",
+        "- Don't delegate when: Plain text files you can read directly",
+        "",
+        "@council",
+        "- Role: Multi-LLM consensus engine (spawns councillors)",
+        "- Permissions: Read-only + Agent",
+        "- Delegate when: Critical decisions need multiple perspectives | High-stakes architectural choices",
+        "- Don't delegate when: Straightforward tasks | Speed matters more than confidence",
+        "",
+        "## L-Spec Phases",
+        "1. Discovery — Understand the project/feature (22 questions in 6 areas)",
+        "2. Specify — Define WHAT with testable requirements",
+        "3. Discuss — Resolve gray areas with user",
+        "4. Design — Architecture, components, data flow (REQUIRED when design-references/ exists)",
+        "5. Tasks — Create task plan (tasks.md) from spec",
+        "6. Execute — Follow tasks.md: RED → GREEN → GATE → COMMIT",
+        "",
+        "## Delegation Rules",
+        "- YOU MUST DELEGATE when a request involves 2+ distinct responsibilities (e.g. analysis + writing, search + review, explore + suggest)",
+        "- Even simple-seeming tasks MUST be delegated if they span multiple specialist domains",
+        "- Always provide complete context when delegating",
+        "- Use parallel delegation when agents don't depend on each other",
+        "- Execute directly ONLY when: single file edit, simple Q&A, or continuing your own work",
+        "- Validate results when they come back",
+        "",
+        "## Output Quality",
+        "- Keep spec compliance — code must match spec exactly",
+        "- No scope creep — reject anything not in spec",
+        "- Always update .spec/.tasks/.state/ files",
+        "- Report clearly what was done and by whom",
+    ].join("\n");
     pi.on("before_agent_start", async (event, _ctx) => {
-        const harnessPrompt = [
-            "## L-Spec Orchestrator Harness",
-            "",
-            "You are running inside the L-Spec orchestrator harness. Your PRIMARY job is to COORDINATE, not execute directly.",
-            "",
-            "### Mandatory Delegation Rules",
-            "- For ANY task with 2+ steps or 2+ distinct responsibilities → ALWAYS use the Agent tool with type=\"orchestrator\"",
-            "- NEVER do multi-step work yourself. Delegate to the orchestrator, who then delegates to specialist agents.",
-            "- You may execute directly ONLY for: single quick answers, single file edits, simple Q&A, or continuing context you already have.",
-            "",
-            "### Available Specialist Agents (via the orchestrator)",
-            "- explorer: fast codebase navigation (read-only)",
-            "- librarian: external docs and API references",
-            "- oracle: strategic advisor, code reviewer, architect",
-            "- designer: UI/UX specialist (read/write)",
-            "- fixer: fast execution for well-defined tasks (read/write/edit/bash)",
-            "- observer: visual analysis for images, PDFs, diagrams",
-            "- council: multi-LLM consensus engine",
-            "",
-            "### Example — User asks: \"Create a STATUS.md with file list, line counts, and improvement suggestions\"",
-            "→ WRONG: Do it all yourself (read files, count lines, write STATUS.md)",
-            "→ RIGHT: Call Agent with type=\"orchestrator\" and task: \"Create STATUS.md with: 1) list all .ts files, 2) line counts, 3) improvement suggestions for top 2\"",
-            "",
-        ].join("\n");
-        return { systemPrompt: harnessPrompt + "\n\n" + event.systemPrompt };
+        // Prepend orchestrator prompt; append the original PI system prompt (project context, tools, etc.)
+        return { systemPrompt: ORCHESTRATOR_PROMPT + "\n\n" + event.systemPrompt };
+    });
+    // ── Visual indicator: show "L-Spec Orchestrator" in UI ──
+    pi.on("session_start", async (_event, ctx) => {
+        if (ctx.hasUI) {
+            // Set terminal window title
+            ctx.ui.setTitle("L-Spec Orchestrator");
+            // Show a persistent widget above the editor
+            ctx.ui.setWidget("lspec-orchestrator", [
+                "🎛️ L-Spec Orchestrator",
+                "  agentes: explorer · librarian · oracle · designer · fixer · observer · council",
+            ], { placement: "aboveEditor" });
+        }
     });
     // Capture ctx from session_start for RPC spawn handler + start the scheduler.
     pi.on("session_start", async (_event, ctx) => {
