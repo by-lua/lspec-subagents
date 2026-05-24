@@ -59,7 +59,12 @@ Pode usar qualquer modelo disponível no seu provedor, ex: `"anthropic/claude-so
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash
 ```
 
-Instala em `~/.pi/agents/` (9 agentes `.md`) e `~/.pi/agent/lspec-model-config.json` (se não existir).
+O instalador faz **3 passos**:
+1. `npm install @tintinweb/pi-subagents` — instala a extensão oficial (registra o `/agents` no PI)
+2. Remove os 3 agentes padrão (general-purpose, Explore, Plan)
+3. Copia os 9 agentes L-Spec (`.md`) pra `~/.pi/agents/` + cria `lspec-model-config.json` (se não existir)
+
+Requer: `git`, `node`, `npm`.
 
 ### Atualizar
 
@@ -67,7 +72,7 @@ Instala em `~/.pi/agents/` (9 agentes `.md`) e `~/.pi/agent/lspec-model-config.j
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash
 ```
 
-Desinstala a versão anterior e instala a mais recente. Preserva `lspec-model-config.json`.
+Reinstala a extensão npm (pega versão mais recente), remove padrão, reinstala agentes L-Spec. Preserva `lspec-model-config.json`.
 
 ### Desinstalar
 
@@ -75,13 +80,23 @@ Desinstala a versão anterior e instala a mais recente. Preserva `lspec-model-co
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/uninstall.sh | bash
 ```
 
-Remove os 9 agentes. A config de modelos é preservada — para remover: `rm ~/.pi/agent/lspec-model-config.json`
+Remove os 9 agentes `.md` L-Spec. A extensão npm e a config são preservadas.
+
+Para remover tudo:
+```bash
+npm uninstall @tintinweb/pi-subagents  # remove extensão
+rm ~/.pi/agent/lspec-model-config.json  # remove config
+```
 
 ### Instalação manual
 
 ```bash
-git clone https://github.com/by-lua/lspec-subagents.git ~/.lspec-subagents
-cd ~/.lspec-subagents && bash install.sh
+cd ~/.pi/agent/npm && npm install @tintinweb/pi-subagents@0.7.3  # extensão
+rm ~/.pi/agents/{general-purpose,Explore,Plan}.md 2>/dev/null     # padrão
+git clone --depth 1 https://github.com/by-lua/lspec-subagents.git /tmp/lspec-sub
+cp /tmp/lspec-sub/.pi/agents/*.md ~/.pi/agents/                   # nossos
+cp /tmp/lspec-sub/lspec-model-config.example.json ~/.pi/agent/lspec-model-config.json  # config
+rm -rf /tmp/lspec-sub
 ```
 
 ## Como usar
