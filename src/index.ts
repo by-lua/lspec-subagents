@@ -652,11 +652,11 @@ Available agent types:
 ${typeListText}
 
 Guidelines:
-- For parallel work, use run_in_background: true on each agent. Foreground calls run sequentially — only one executes at a time.
-- Use orchestrator for complex tasks that need file editing.
-- Use fixer for well-defined implementation tasks.
-- Use explorer for codebase searches and code understanding.
-- Use oracle for architecture decisions and code review.
+- ALWAYS use type="orchestrator" for any task that involves 2+ steps, multiple files, or distinct responsibilities. The orchestrator decides which specialist agents to delegate to.
+- Use fixer ONLY for well-defined single-purpose implementation tasks.
+- Use explorer ONLY for codebase searches and code understanding.
+- Use oracle ONLY for architecture decisions and code review.
+- For parallel work, use run_in_background: true on each agent.
 - Provide clear, detailed prompts so the agent can work autonomously.
 - Agent results are returned as text — summarize them for the user.
 - Use run_in_background for work you don't need immediately. You will be notified when it completes.
