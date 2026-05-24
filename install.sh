@@ -22,14 +22,20 @@ echo -e "${BLUE}║  lspec-subagents — Instalador  ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════╝${NC}"
 echo ""
 
-# ── Passo 1: Instalar extensão via pi install ──
-echo -e "${BLUE}→ Instalando extensão lspec-subagents...${NC}"
+# ── Passo 0: Remover extensões conflitantes ──
+echo -e "${BLUE}→ Removendo extensões conflitantes...${NC}"
 if command -v pi &>/dev/null; then
-    pi install "git:github.com/by-lua/lspec-subagents" 2>/dev/null
+    # Remove old tintinweb subagents if present (causes tool name conflicts)
+    pi remove "npm:@tintinweb/pi-subagents" 2>/dev/null && echo -e "  ${YELLOW}⊘${NC} Removido npm:@tintinweb/pi-subagents (conflito)"
+    pi remove "git:github.com/by-lua/lspec-subagents" 2>/dev/null
 else
     echo -e "${RED}✗ PI não encontrado. Instale em https://pi.dev${NC}"
     exit 1
 fi
+
+# ── Passo 1: Instalar extensão via pi install ──
+echo -e "${BLUE}→ Instalando extensão lspec-subagents...${NC}"
+pi install "git:github.com/by-lua/lspec-subagents" 2>/dev/null
 
 echo -e "  ${GREEN}✓${NC} Extensão instalada (9 agentes L-Spec + /agents)"
 
