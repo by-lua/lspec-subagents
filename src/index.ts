@@ -1675,7 +1675,7 @@ Guidelines for choosing settings:
 
 Write the file using the write tool. Only write the file, nothing else.`;
 
-    const record = await manager.spawnAndWait(pi, ctx, "general-purpose", generatePrompt, {
+    const record = await manager.spawnAndWait(pi, ctx, "orchestrator", generatePrompt, {
       description: `Generate ${name} agent`,
       maxTurns: 5,
     });

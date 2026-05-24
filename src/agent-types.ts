@@ -141,7 +141,7 @@ export function getToolNamesForType(type: string): string[] {
   return names;
 }
 
-/** Get config for a type (case-insensitive, returns a SubagentTypeConfig-compatible object). Falls back to general-purpose. */
+/** Get config for a type (case-insensitive, returns a SubagentTypeConfig-compatible object). Falls back to orchestrator. */
 export function getConfig(type: string): {
   displayName: string;
   description: string;
@@ -163,26 +163,26 @@ export function getConfig(type: string): {
     };
   }
 
-  // Fallback for unknown/disabled types — general-purpose config
-  const gp = agents.get("general-purpose");
-  if (gp && gp.enabled !== false) {
+  // Fallback for unknown/disabled types — orchestrator config
+  const fallback = agents.get("orchestrator");
+  if (fallback && fallback.enabled !== false) {
     return {
-      displayName: gp.displayName ?? gp.name,
-      description: gp.description,
-      builtinToolNames: gp.builtinToolNames ?? BUILTIN_TOOL_NAMES,
-      extensions: gp.extensions,
-      skills: gp.skills,
-      promptMode: gp.promptMode,
+      displayName: fallback.displayName ?? fallback.name,
+      description: fallback.description,
+      builtinToolNames: fallback.builtinToolNames ?? BUILTIN_TOOL_NAMES,
+      extensions: fallback.extensions,
+      skills: fallback.skills,
+      promptMode: fallback.promptMode,
     };
   }
 
   // Absolute fallback (should never happen)
   return {
-    displayName: "Agent",
-    description: "General-purpose agent for complex, multi-step tasks",
+    displayName: "Orchestrator",
+    description: "L-Spec central coordinator — delegates to specialists, manages phases",
     builtinToolNames: BUILTIN_TOOL_NAMES,
     extensions: true,
     skills: true,
-    promptMode: "append",
+    promptMode: "replace",
   };
 }

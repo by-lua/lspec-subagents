@@ -1,7 +1,7 @@
 {
-  "name": "@lspec/subagents",
-  "version": "0.1.0",
-  "description": "L-Spec Subagents — 9 specialized agents for PI.dev with centralized model config (inspired by oh-my-opencode-slim). Forked from @tintinweb/pi-subagents.",
+  "name": "@tintinweb/pi-subagents",
+  "version": "0.7.3-lspec.1",
+  "description": "L-Spec Subagents \u2014 9 specialized agents for PI.dev with centralized model config (inspired by oh-my-opencode-slim). Forked from @tintinweb/pi-subagents.",
   "author": "L-Spec",
   "license": "MIT",
   "repository": {
