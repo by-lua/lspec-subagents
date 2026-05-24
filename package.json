@@ -1,12 +1,12 @@
 {
-  "name": "@tintinweb/pi-subagents",
-  "version": "0.7.3-lspec.1",
+  "name": "lspec-subagents",
+  "version": "1.0.0",
   "description": "L-Spec Subagents \u2014 9 specialized agents for PI.dev with centralized model config (inspired by oh-my-opencode-slim). Forked from @tintinweb/pi-subagents.",
   "author": "L-Spec",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lua/lspec-subagents.git"
+    "url": "https://github.com/by-lua/lspec-subagents.git"
   },
   "homepage": "https://github.com/lua/lspec-subagents#readme",
   "keywords": [
@@ -43,7 +43,7 @@
   },
   "pi": {
     "extensions": [
-      "./src/index.ts"
+      "./dist/index.js"
     ],
     "image": "https://raw.githubusercontent.com/lua/lspec-subagents/main/media/screenshot.png"
   }
