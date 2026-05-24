@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # @lspec/subagents — Instalador
 # Uso: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash
-# Requer: git, Node.js 18+, npm
+# Requer: git
 
 set -uo pipefail
 
@@ -27,10 +27,11 @@ echo -e "${BLUE}→ Baixando repositório...${NC}"
 git clone --depth 1 "$REPO" "$REPO_DIR" 2>/dev/null || {
     echo -e "${RED}✗ Erro ao clonar. Git instalado?${NC}"; rm -rf "$REPO_DIR"; exit 1; }
 
+mkdir -p "$PI_AGENTS_DIR" "$PI_AGENT_DIR"
+
 # Copiar agentes (.pi/agents/)
 agent_count=0
 if [[ -d "$REPO_DIR/.pi/agents" ]]; then
-    mkdir -p "$PI_AGENTS_DIR"
     echo -e "${BLUE}→ Instalando agentes...${NC}"
     for agent_file in "$REPO_DIR"/.pi/agents/*.md; do
         [[ -f "$agent_file" ]] || continue
@@ -41,26 +42,14 @@ if [[ -d "$REPO_DIR/.pi/agents" ]]; then
     done
 fi
 
-# Copiar exemplo de config de modelos (não sobrescreve se já existe)
-config_copied=0
+# Copiar config de modelos (não sobrescreve se já existe)
 if [[ -f "$REPO_DIR/lspec-model-config.example.json" ]]; then
     if [[ ! -f "$PI_AGENT_DIR/lspec-model-config.json" ]]; then
-        mkdir -p "$PI_AGENT_DIR"
         cp "$REPO_DIR/lspec-model-config.example.json" "$PI_AGENT_DIR/lspec-model-config.json"
         echo -e "  ${GREEN}✓${NC} lspec-model-config.json (criado com defaults)"
-        config_copied=1
     else
         echo -e "  ${BLUE}⊘${NC} lspec-model-config.json (já existe, mantido)"
     fi
-fi
-
-# Instalar dependências npm se o pi CLI estiver disponível
-npm_installed=0
-if command -v pi &>/dev/null; then
-    echo -e "${BLUE}→ Instalando dependências npm...${NC}"
-    cd "$REPO_DIR" && npm install --production 2>/dev/null && npm_installed=1 || {
-        echo -e "  ${BLUE}⊘${NC} npm install falhou — dependências serão instaladas pelo PI.dev"
-    }
 fi
 
 echo ""
