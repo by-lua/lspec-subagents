@@ -9,7 +9,7 @@
  *   3. Embedded: hardcoded defaults in this file
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { getAgentDir } from "@mariozechner/pi-coding-agent";
 
@@ -137,4 +137,57 @@ export function getModelForAgent(
 ): string | undefined {
   const config = loadModelConfig(cwd);
   return config.agents[agentName];
+}
+
+/**
+ * Get the global model config file path.
+ */
+export function getGlobalModelConfigPath(): string {
+  return join(getAgentDir(), "lspec-model-config.json");
+}
+
+/**
+ * Get the project model config file path.
+ */
+export function getProjectModelConfigPath(cwd: string): string {
+  return join(cwd, ".pi", "lspec-model-config.json");
+}
+
+/**
+ * Save a model assignment for an agent to the config file.
+ * Updates global config by default, or project config if specified.
+ * Preserves existing entries and metadata keys (_note, _docs, etc).
+ */
+export function saveModelForAgent(
+  agentName: string,
+  model: string,
+  target: "global" | "project" = "global",
+  cwd?: string,
+): void {
+  const configPath = target === "project"
+    ? getProjectModelConfigPath(cwd ?? process.cwd())
+    : getGlobalModelConfigPath();
+
+  // Read existing config or create new
+  let existing: Record<string, unknown> = {};
+  if (existsSync(configPath)) {
+    try {
+      const raw = readFileSync(configPath, "utf-8");
+      existing = JSON.parse(raw);
+    } catch {
+      existing = {};
+    }
+  }
+
+  // Update the agents section
+  if (!existing.agents || typeof existing.agents !== "object") {
+    existing.agents = {};
+  }
+  (existing.agents as Record<string, string>)[agentName] = model;
+
+  // Ensure directory exists
+  mkdirSync(join(configPath, ".."), { recursive: true });
+
+  // Write back
+  writeFileSync(configPath, JSON.stringify(existing, null, 2) + "\n", "utf-8");
 }

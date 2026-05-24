@@ -42,3 +42,17 @@ export declare function resolveAllPlaceholders(agents: Map<string, {
 export declare function loadModelConfig(cwd: string): ModelConfig;
 /** Re-export for convenience — returns a fully resolved model for an agent. */
 export declare function getModelForAgent(agentName: string, cwd: string): string | undefined;
+/**
+ * Get the global model config file path.
+ */
+export declare function getGlobalModelConfigPath(): string;
+/**
+ * Get the project model config file path.
+ */
+export declare function getProjectModelConfigPath(cwd: string): string;
+/**
+ * Save a model assignment for an agent to the config file.
+ * Updates global config by default, or project config if specified.
+ * Preserves existing entries and metadata keys (_note, _docs, etc).
+ */
+export declare function saveModelForAgent(agentName: string, model: string, target?: "global" | "project", cwd?: string): void;

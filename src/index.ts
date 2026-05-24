@@ -23,6 +23,7 @@ import { loadCustomAgents } from "./custom-agents.js";
 import { GroupJoinManager } from "./group-join.js";
 import { resolveAgentInvocationConfig, resolveJoinMode } from "./invocation-config.js";
 import { type ModelRegistry, resolveModel } from "./model-resolver.js";
+import { loadModelConfig, saveModelForAgent } from "./model-config-loader.js";
 import { createOutputFilePath, streamToOutputFile, writeInitialEntry } from "./output-file.js";
 import { SubagentScheduler } from "./schedule.js";
 import { resolveStorePath, ScheduleStore } from "./schedule-store.js";
@@ -1443,21 +1444,25 @@ Guidelines:
     const isDefault = cfg.isDefault === true;
     const disabled = cfg.enabled === false;
 
+    // Get current model for this agent from config
+    const currentModel = cfg.model || loadModelConfig(process.cwd()).agents[name] || "default";
+    const modelLabel = currentModel.startsWith("{{model:") ? "default" : currentModel;
+
     let menuOptions: string[];
     if (disabled && file) {
       // Disabled agent with a file — offer Enable
       menuOptions = isDefault
-        ? ["Enable", "Edit", "Reset to default", "Delete", "Back"]
-        : ["Enable", "Edit", "Delete", "Back"];
+        ? ["Enable", "Edit", "Change model", "Reset to default", "Delete", "Back"]
+        : ["Enable", "Edit", "Change model", "Delete", "Back"];
     } else if (isDefault && !file) {
       // Default agent with no .md override
-      menuOptions = ["Eject (export as .md)", "Disable", "Back"];
+      menuOptions = ["Eject (export as .md)", "Change model", "Disable", "Back"];
     } else if (isDefault && file) {
       // Default agent with .md override (ejected)
-      menuOptions = ["Edit", "Disable", "Reset to default", "Delete", "Back"];
+      menuOptions = ["Edit", "Change model", "Disable", "Reset to default", "Delete", "Back"];
     } else {
       // User-defined agent
-      menuOptions = ["Edit", "Disable", "Delete", "Back"];
+      menuOptions = ["Edit", "Change model", "Disable", "Delete", "Back"];
     }
 
     const choice = await ctx.ui.select(name, menuOptions);
@@ -1494,7 +1499,43 @@ Guidelines:
       await disableAgent(ctx, name);
     } else if (choice === "Enable") {
       await enableAgent(ctx, name);
+    } else if (choice === "Change model") {
+      await changeModel(ctx, name, modelLabel);
     }
+  }
+
+  /** Change the model for an agent — 2-step: pick provider, then model. */
+  async function changeModel(ctx: ExtensionCommandContext, name: string, currentModel: string) {
+    // Step 1: List available providers
+    const allModels = (ctx.modelRegistry.getAvailable?.() ?? ctx.modelRegistry.getAll()) as Array<{ id: string; name: string; provider: string }>;
+    if (!allModels || allModels.length === 0) {
+      ctx.ui.notify("No models available. Configure a provider first.", "warning");
+      return;
+    }
+
+    // Group by provider
+    const providerMap = new Map<string, string[]>();
+    for (const m of allModels) {
+      const models = providerMap.get(m.provider) ?? [];
+      models.push(m.id);
+      providerMap.set(m.provider, models);
+    }
+
+    const providers = [...providerMap.keys()].sort();
+    const providerChoice = await ctx.ui.select(`Select provider (current: ${currentModel})`, providers);
+    if (!providerChoice) return;
+
+    // Step 2: List models for selected provider
+    const models = providerMap.get(providerChoice)!.sort();
+    const modelChoice = await ctx.ui.select(`Select model (${providerChoice})`, models);
+    if (!modelChoice) return;
+
+    const fullModel = `${providerChoice}/${modelChoice}`;
+
+    // Step 3: Save to lspec-model-config.json
+    saveModelForAgent(name, fullModel, "global");
+    reloadCustomAgents();
+    ctx.ui.notify(`${name} model changed to ${fullModel}`, "info");
   }
 
   /** Eject a default agent: write its embedded config as a .md file. */
