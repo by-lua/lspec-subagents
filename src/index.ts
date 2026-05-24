@@ -570,26 +570,26 @@ export default function (pi: ExtensionAPI) {
 
   /** Build the full type list text dynamically from the unified registry. */
   const buildTypeListText = () => {
-    const defaultNames = getDefaultAgentNames();
-    const userNames = getUserAgentNames();
+    // Only list orchestrator as directly callable — all other agents are subagents
+    // that should only be invoked by the orchestrator, not by the main PI agent.
+    const orchestratorCfg = getAgentConfig("orchestrator");
+    const orchestratorDesc = orchestratorCfg
+      ? `- orchestrator: ${orchestratorCfg.description} (primary — ALWAYS use this for any multi-step task)`
+      : "- orchestrator: Central coordinator that delegates to specialists";
 
-    const defaultDescs = defaultNames.map((name) => {
+    // List subagents as info only — the LLM should NOT call them directly
+    const subagentNames = getAvailableTypes().filter(n => n !== "orchestrator");
+    const subagentDescs = subagentNames.map((name) => {
       const cfg = getAgentConfig(name);
-      const modelSuffix = cfg?.model ? ` (${getModelLabelFromConfig(cfg.model)})` : "";
-      return `- ${name}: ${cfg?.description ?? name}${modelSuffix}`;
-    });
-
-    const customDescs = userNames.map((name) => {
-      const cfg = getAgentConfig(name);
-      return `- ${name}: ${cfg?.description ?? name}`;
+      return `  ${name}: ${cfg?.description ?? name}`;
     });
 
     return [
-      "Default agents:",
-      ...defaultDescs,
-      ...(customDescs.length > 0 ? ["", "Custom agents:", ...customDescs] : []),
+      "Primary agent (use for ALL tasks with 2+ steps):",
+      orchestratorDesc,
       "",
-      `Custom agents can be defined in .pi/agents/<name>.md (project) or ${getAgentDir()}/agents/<name>.md (global) — they are picked up automatically. Project-level agents override global ones. Creating a .md file with the same name as a default agent overrides it.`,
+      "Subagents (only the orchestrator should call these):",
+      ...subagentDescs,
     ].join("\n");
   };
 

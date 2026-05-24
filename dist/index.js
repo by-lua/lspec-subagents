@@ -16,7 +16,7 @@ import { Text } from "@mariozechner/pi-tui";
 import { Type } from "@sinclair/typebox";
 import { AgentManager } from "./agent-manager.js";
 import { getAgentConversation, getDefaultMaxTurns, getGraceTurns, normalizeMaxTurns, setDefaultMaxTurns, setGraceTurns, steerAgent } from "./agent-runner.js";
-import { BUILTIN_TOOL_NAMES, getAgentConfig, getAllTypes, getAvailableTypes, getDefaultAgentNames, getUserAgentNames, registerAgents, resolveType } from "./agent-types.js";
+import { BUILTIN_TOOL_NAMES, getAgentConfig, getAllTypes, getAvailableTypes, registerAgents, resolveType } from "./agent-types.js";
 import { registerRpcHandlers } from "./cross-extension-rpc.js";
 import { loadCustomAgents } from "./custom-agents.js";
 import { GroupJoinManager } from "./group-join.js";
@@ -509,23 +509,24 @@ export default function (pi) {
     });
     /** Build the full type list text dynamically from the unified registry. */
     const buildTypeListText = () => {
-        const defaultNames = getDefaultAgentNames();
-        const userNames = getUserAgentNames();
-        const defaultDescs = defaultNames.map((name) => {
+        // Only list orchestrator as directly callable — all other agents are subagents
+        // that should only be invoked by the orchestrator, not by the main PI agent.
+        const orchestratorCfg = getAgentConfig("orchestrator");
+        const orchestratorDesc = orchestratorCfg
+            ? `- orchestrator: ${orchestratorCfg.description} (primary — ALWAYS use this for any multi-step task)`
+            : "- orchestrator: Central coordinator that delegates to specialists";
+        // List subagents as info only — the LLM should NOT call them directly
+        const subagentNames = getAvailableTypes().filter(n => n !== "orchestrator");
+        const subagentDescs = subagentNames.map((name) => {
             const cfg = getAgentConfig(name);
-            const modelSuffix = cfg?.model ? ` (${getModelLabelFromConfig(cfg.model)})` : "";
-            return `- ${name}: ${cfg?.description ?? name}${modelSuffix}`;
-        });
-        const customDescs = userNames.map((name) => {
-            const cfg = getAgentConfig(name);
-            return `- ${name}: ${cfg?.description ?? name}`;
+            return `  ${name}: ${cfg?.description ?? name}`;
         });
         return [
-            "Default agents:",
-            ...defaultDescs,
-            ...(customDescs.length > 0 ? ["", "Custom agents:", ...customDescs] : []),
+            "Primary agent (use for ALL tasks with 2+ steps):",
+            orchestratorDesc,
             "",
-            `Custom agents can be defined in .pi/agents/<name>.md (project) or ${getAgentDir()}/agents/<name>.md (global) — they are picked up automatically. Project-level agents override global ones. Creating a .md file with the same name as a default agent overrides it.`,
+            "Subagents (only the orchestrator should call these):",
+            ...subagentDescs,
         ].join("\n");
     };
     /** Derive a short model label from a model string. */
