@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# @lspec/subagents — Atualizador
+# lspec-subagents — Atualizador
 # Uso: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash
-# Requer: git, pi (PI.dev)
 
 set -uo pipefail
 
@@ -12,40 +11,38 @@ YELLOW='\033[0;33m'
 NC='\033[0m'
 
 REPO="https://github.com/by-lua/lspec-subagents.git"
-
 PI_AGENTS_DIR="$HOME/.pi/agents"
 PI_AGENT_DIR="$HOME/.pi/agent"
 
 echo ""
-echo -e "${BLUE}╔══════════════════════════════════╗${NC}"
-echo -e "${BLUE}║   @lspec/subagents — Atualizador ║${NC}"
-echo -e "${BLUE}╚══════════════════════════════════╝${NC}"
+echo -e "${BLUE}╔════════════════════════════════╗${NC}"
+echo -e "${BLUE}║  lspec-subagents — Atualizar   ║${NC}"
+echo -e "${BLUE}╚════════════════════════════════╝${NC}"
 echo ""
 
 # ── Reinstalar extensão ──
-echo -e "${BLUE}→ Reinstalando extensão @tintinweb/pi-subagents...${NC}"
+echo -e "${BLUE}→ Reinstalando extensão...${NC}"
 if command -v pi &>/dev/null; then
-    pi install npm:@tintinweb/pi-subagents 2>/dev/null
-elif [[ -d "$HOME/.pi/agent/npm" ]]; then
-    cd "$HOME/.pi/agent/npm" && npm install @tintinweb/pi-subagents@0.7.3 2>/dev/null
-fi
-
-if [[ ! -d "$HOME/.pi/agent/npm/node_modules/@tintinweb/pi-subagents" ]]; then
-    echo -e "${RED}✗ Extensão não reinstalou.${NC}"; exit 1
+    pi remove "git:github.com/by-lua/lspec-subagents" 2>/dev/null
+    pi install "git:github.com/by-lua/lspec-subagents" 2>/dev/null
+else
+    echo -e "${RED}✗ PI não encontrado.${NC}"
+    exit 1
 fi
 echo -e "  ${GREEN}✓${NC} Extensão atualizada"
 
-# ── Remover agentes padrão (podem voltar no pi install) ──
-default_agents=("general-purpose" "Explore" "Plan")
-for agent in "${default_agents[@]}"; do
+# ── Reinstalar .md agents ──
+echo -e "${BLUE}→ Atualizando agent .md files...${NC}"
+lspec_agents=(orchestrator explorer librarian oracle designer fixer observer council councillor)
+removed=0
+for agent in "${lspec_agents[@]}"; do
     if [[ -f "$PI_AGENTS_DIR/${agent}.md" ]]; then
         rm "$PI_AGENTS_DIR/${agent}.md"
-        echo -e "  ${YELLOW}✗${NC} Removido: ${agent}.md"
+        ((removed++))
     fi
 done
+echo -e "  ${BLUE}⊘${NC} $removed .md antigos removidos"
 
-# ── Baixar e reinstalar nossos agentes ──
-echo -e "${BLUE}→ Baixando agentes L-Spec...${NC}"
 REPO_DIR="$(mktemp -d)"
 git clone --depth 1 "$REPO" "$REPO_DIR" 2>/dev/null || {
     echo -e "${RED}✗ Erro ao clonar.${NC}"; rm -rf "$REPO_DIR"; exit 1; }
@@ -59,18 +56,8 @@ for agent_file in "$REPO_DIR"/.pi/agents/*.md; do
     ((agent_count++))
 done
 
-# Preservar config existente
-if [[ -f "$REPO_DIR/lspec-model-config.example.json" ]]; then
-    if [[ ! -f "$PI_AGENT_DIR/lspec-model-config.json" ]]; then
-        cp "$REPO_DIR/lspec-model-config.example.json" "$PI_AGENT_DIR/lspec-model-config.json"
-        echo -e "  ${GREEN}✓${NC} lspec-model-config.json (criado com defaults)"
-    else
-        echo -e "  ${BLUE}⊘${NC} lspec-model-config.json (já existe, mantido)"
-    fi
-fi
-
-echo ""
-echo -e "${GREEN}✓ @lspec/subagents atualizado!${NC} ($agent_count agentes)"
-echo ""
-
 rm -rf "$REPO_DIR"
+
+echo ""
+echo -e "${GREEN}✓ lspec-subagents atualizado!${NC} ($agent_count .md agents | extensão standalone)"
+echo ""

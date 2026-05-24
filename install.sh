@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# @lspec/subagents — Instalador
+# lspec-subagents — Instalador
 # Uso: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash
 # Requer: git, pi (PI.dev)
 
@@ -17,45 +17,24 @@ PI_AGENTS_DIR="$HOME/.pi/agents"
 PI_AGENT_DIR="$HOME/.pi/agent"
 
 echo ""
-echo -e "${BLUE}╔═════════════════════════════════╗${NC}"
-echo -e "${BLUE}║   @lspec/subagents — Instalador ║${NC}"
-echo -e "${BLUE}╚═════════════════════════════════╝${NC}"
+echo -e "${BLUE}╔════════════════════════════════╗${NC}"
+echo -e "${BLUE}║  lspec-subagents — Instalador  ║${NC}"
+echo -e "${BLUE}╚════════════════════════════════╝${NC}"
 echo ""
 
 # ── Passo 1: Instalar extensão via pi install ──
-echo -e "${BLUE}→ Instalando extensão @tintinweb/pi-subagents...${NC}"
+echo -e "${BLUE}→ Instalando extensão lspec-subagents...${NC}"
 if command -v pi &>/dev/null; then
-    pi install npm:@tintinweb/pi-subagents 2>/dev/null
-elif [[ -d "$HOME/.pi/agent/npm" ]]; then
-    cd "$HOME/.pi/agent/npm" && npm install @tintinweb/pi-subagents@0.7.3 2>/dev/null
+    pi install "git:github.com/by-lua/lspec-subagents" 2>/dev/null
 else
     echo -e "${RED}✗ PI não encontrado. Instale em https://pi.dev${NC}"
     exit 1
 fi
 
-if [[ ! -d "$HOME/.pi/agent/npm/node_modules/@tintinweb/pi-subagents" ]]; then
-    echo -e "${RED}✗ Extensão não instalou. Verifique pi install.${NC}"
-    exit 1
-fi
-echo -e "  ${GREEN}✓${NC} Extensão instalada (registra /agents no PI)"
+echo -e "  ${GREEN}✓${NC} Extensão instalada (9 agentes L-Spec + /agents)"
 
-# ── Passo 2: Remover agentes padrão ──
-echo -e "${BLUE}→ Removendo agentes padrão...${NC}"
-default_agents=("general-purpose" "Explore" "Plan")
-removed=0
-for agent in "${default_agents[@]}"; do
-    if [[ -f "$PI_AGENTS_DIR/${agent}.md" ]]; then
-        rm "$PI_AGENTS_DIR/${agent}.md"
-        echo -e "  ${YELLOW}✗${NC} Removido: ${agent}.md"
-        ((removed++))
-    fi
-done
-if [[ $removed -eq 0 ]]; then
-    echo -e "  ${BLUE}⊘${NC} Nenhum agente padrão encontrado"
-fi
-
-# ── Passo 3: Clonar e copiar nossos agentes ──
-echo -e "${BLUE}→ Baixando agentes L-Spec...${NC}"
+# ── Passo 2: Clonar e copiar .md de agentes ──
+echo -e "${BLUE}→ Copiando agent .md files...${NC}"
 REPO_DIR="$(mktemp -d)"
 git clone --depth 1 "$REPO" "$REPO_DIR" 2>/dev/null || {
     echo -e "${RED}✗ Erro ao clonar. Git instalado?${NC}"; rm -rf "$REPO_DIR"; exit 1; }
@@ -82,10 +61,10 @@ if [[ -f "$REPO_DIR/lspec-model-config.example.json" ]]; then
 fi
 
 echo ""
-echo -e "${GREEN}✓ @lspec/subagents instalado!${NC} ($agent_count agentes | extensão via pi install)"
+echo -e "${GREEN}✓ lspec-subagents instalado!${NC} ($agent_count .md agents | extensão standalone)"
 echo ""
 echo "Agentes: orchestrator | explorer | librarian | oracle | designer | fixer | observer | council | councillor"
-echo "Extensão: pi install npm:@tintinweb/pi-subagents"
+echo "Extensão: pi install git:github.com/by-lua/lspec-subagents"
 echo "Config:   ~/.pi/agent/lspec-model-config.json"
 echo "Atualizar: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash"
 echo ""

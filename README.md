@@ -1,31 +1,28 @@
-# @lspec/subagents
+# lspec-subagents
 
-> **9 specialized sub-agents for PI.dev** — baseado no `@tintinweb/pi-subagents` com modelo centralizado de configuração (inspirado no oh-my-opencode-slim).
+> **9 specialized sub-agents for PI.dev** — extensão standalone com modelo centralizado de configuração (inspirado no oh-my-opencode-slim). Fork do `@tintinweb/pi-subagents`.
 
-Substitui os 3 agentes padrão (general-purpose, Explore, Plan) por **9 agentes especializados** para o fluxo L-Spec (Lua Spec-Driven Development).
+9 agentes especializados para o fluxo L-Spec (Lua Spec-Driven Development). Os 3 agentes padrão do original (general-purpose, Explore, Plan) foram **completamente removidos** — só os 9 L-Spec existem no código.
 
 ## Agentes
 
-|| Agente | Função | Modelo Padrão (referência) |
-|---|---|---|---|
-|| `orchestrator` | Coordenador central do fluxo L-Spec | `claude-sonnet-4` (advanced) |
-|| `explorer` | Navegação rápida no codebase (read-only) | `gpt-4o-mini` (basic) |
-|| `librarian` | Pesquisa de docs externas e APIs | `claude-sonnet-4` (advanced) |
-|| `oracle` | Arquiteto sênior, code review (read-only) | `claude-opus-4` (elite) |
-|| `designer` | UI/UX specialist | `claude-sonnet-4` (advanced) |
-|| `fixer` | Implementador rápido de tarefas definidas | `claude-sonnet-4` (advanced) |
-|| `observer` | Análise visual (imagens, PDFs, screenshots) | `gpt-4o-mini` (basic, vision-capable) |
-|| `council` | Consenso multi-modelo (spawna councillors) | `claude-opus-4` (elite) |
-|| `councillor` | Membro individual do conselho | `gpt-4o-mini` (basic) |
+- **orchestrator** — Coordenador central do fluxo L-Spec (`claude-sonnet-4`)
+- **explorer** — Navegação rápida no codebase, read-only (`gpt-4o-mini`)
+- **librarian** — Pesquisa de docs externas e APIs (`claude-sonnet-4`)
+- **oracle** — Arquiteto sênior, code review, read-only (`claude-opus-4`)
+- **designer** — UI/UX specialist (`claude-sonnet-4`)
+- **fixer** — Implementador rápido de tarefas definidas (`claude-sonnet-4`)
+- **observer** — Análise visual (imagens, PDFs, screenshots) (`gpt-4o-mini`, vision-capable)
+- **council** — Consenso multi-modelo (spawna councillors) (`claude-opus-4`)
+- **councillor** — Membro individual do conselho (`gpt-4o-mini`)
 
 ## Configuração Centralizada de Modelos
 
-Diferente do pi-subagents original (que tem modelos fixos no código), aqui os modelos são **placeholders** (`{{model:orchestrator}}`) resolvidos em runtime a partir de um arquivo JSON.
+Modelos são **placeholders** (`{{model:orchestrator}}`) resolvidos em runtime via JSON.
 
 ### Como configurar
 
 Crie `lspec-model-config.json` em:
-
 - **Global**: `~/.pi/agent/lspec-model-config.json`
 - **Projeto**: `.pi/lspec-model-config.json` (sobrescreve o global)
 
@@ -45,7 +42,7 @@ Crie `lspec-model-config.json` em:
 }
 ```
 
-Pode usar qualquer modelo disponível no seu provedor, ex: `"anthropic/claude-sonnet-4"`, `"openai/gpt-4o"`, etc. O observer usa um modelo com **visão** (`gpt-4o-mini` no exemplo) pra analisar screenshots.
+Pode usar qualquer modelo disponível no seu provedor. O observer precisa de um modelo com **visão**.
 
 ### Ordem de resolução
 
@@ -53,16 +50,15 @@ Pode usar qualquer modelo disponível no seu provedor, ex: `"anthropic/claude-so
 2. Global (`~/.pi/agent/lspec-model-config.json`)
 3. Defaults embutidos (claude-sonnet-4, gpt-4o-mini, claude-opus-4)
 
-## Instalação rápida
+## Instalação
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash
 ```
 
-O instalador faz **3 passos**:
-1. `pi install npm:@tintinweb/pi-subagents` — instala a extensão oficial (registra o `/agents` no PI)
-2. Remove os 3 agentes padrão (general-purpose, Explore, Plan)
-3. Copia os 9 agentes L-Spec (`.md`) pra `~/.pi/agents/` + cria `lspec-model-config.json` (se não existir)
+O instalador faz 2 passos:
+1. `pi install git:github.com/by-lua/lspec-subagents` — instala a extensão standalone
+2. Copia os 9 agent `.md` files pra `~/.pi/agents/` + cria `lspec-model-config.json` (se não existir)
 
 Requer: `git`, `pi` (PI.dev).
 
@@ -72,30 +68,21 @@ Requer: `git`, `pi` (PI.dev).
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash
 ```
 
-Reinstala a extensão via `pi install` (pega versão mais recente), remove padrão, reinstala agentes L-Spec. Preserva `lspec-model-config.json`.
-
 ### Desinstalar
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/uninstall.sh | bash
 ```
 
-Remove os 9 agentes `.md` L-Spec. A extensão npm e a config são preservadas.
-
-Para remover tudo:
-```bash
-pi uninstall npm:@tintinweb/pi-subagents  # remove extensão
-rm ~/.pi/agent/lspec-model-config.json     # remove config
-```
+Remove extensão + 9 agent .md files. Preserva `lspec-model-config.json`.
 
 ### Instalação manual
 
 ```bash
-pi install npm:@tintinweb/pi-subagents@0.7.3              # extensão
-rm ~/.pi/agents/{general-purpose,Explore,Plan}.md 2>/dev/null     # padrão
+pi install git:github.com/by-lua/lspec-subagents          # extensão standalone
 git clone --depth 1 https://github.com/by-lua/lspec-subagents.git /tmp/lspec-sub
-cp /tmp/lspec-sub/.pi/agents/*.md ~/.pi/agents/                   # nossos
-cp /tmp/lspec-sub/lspec-model-config.example.json ~/.pi/agent/lspec-model-config.json  # config
+cp /tmp/lspec-sub/.pi/agents/*.md ~/.pi/agents/          # .md overrides
+cp /tmp/lspec-sub/lspec-model-config.example.json ~/.pi/agent/lspec-model-config.json
 rm -rf /tmp/lspec-sub
 ```
 
@@ -112,11 +99,12 @@ Ou customize agentes `.md` em `.pi/agents/` para sobrescrever os defaults.
 
 ## Diferenças do pi-subagents original
 
-- ✅ **9 agentes** em vez de 3
+- ✅ **9 agentes L-Spec** embutidos no código (não override por .md)
+- ✅ **Zero agentes padrão** — general-purpose/Explore/Plan removidos do source
 - ✅ **Placeholders de modelo** (`{{model:orchestrator}}`)
 - ✅ **Config JSON centralizada** (projeto + global + defaults)
-- ✅ **Fallback padrão** mudou de `general-purpose` pra `orchestrator`
-- ✅ **Referências** a agentes antigos (Explore/Plan/general-purpose) substituídas
+- ✅ **Fallback** mudou de `general-purpose` pra `orchestrator`
+- ✅ **Extensão standalone** — não depende do pacote npm @tintinweb
 
 ## Licença
 
