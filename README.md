@@ -62,6 +62,18 @@ O instalador faz 2 passos:
 
 Requer: `git`, `pi` (PI.dev).
 
+### Dependências Opcionais (Recomendadas)
+
+Os agentes usam estas ferramentas PI quando disponíveis:
+
+```bash
+pi install npm:pi-cymbal              # Code navigation (explorer, oracle, fixer, orchestrator)
+pi install npm:@davehardy20/pi-lsp-tools  # LSP-powered code tools (explorer, fixer, oracle)
+pi install npm:pi-mermaid             # Mermaid diagrams (orchestrator, designer)
+```
+
+Cada agente usa as ferramentas disponíveis com fallback para grep/read se o pacote não estiver instalado.
+
 ### Atualizar
 
 ```bash
