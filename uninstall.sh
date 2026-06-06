@@ -21,7 +21,7 @@ echo ""
 # ── Remover extensão ──
 echo -e "${BLUE}→ Removendo extensão...${NC}"
 if command -v pi &>/dev/null; then
-    pi remove "npm:@by-lua/lspec-subagents" 2>/dev/null
+    pi remove "npm:bylua-lspec-subagents" 2>/dev/null
     pi remove "git:github.com/by-lua/lspec-subagents" 2>/dev/null
     echo -e "  ${GREEN}✓${NC} Extensão removida"
 else

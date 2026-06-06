@@ -27,9 +27,9 @@ fi
 
 # ── Reinstalar extensão via npm ──
 echo -e "${BLUE}→ Reinstalando extensão...${NC}"
-pi remove "npm:@by-lua/lspec-subagents" 2>/dev/null
+pi remove "npm:bylua-lspec-subagents" 2>/dev/null
 pi remove "git:github.com/by-lua/lspec-subagents" 2>/dev/null
-pi install "npm:@by-lua/lspec-subagents" 2>/dev/null
+pi install "npm:bylua-lspec-subagents" 2>/dev/null
 echo -e "  ${GREEN}✓${NC} Extensão atualizada (@by-lua/lspec-subagents)"
 
 # ── Reinstalar .md agents ──

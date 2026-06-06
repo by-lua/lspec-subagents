@@ -31,11 +31,11 @@ fi
 echo -e "${BLUE}→ Removendo extensões conflitantes...${NC}"
 pi remove "npm:@tintinweb/pi-subagents" 2>/dev/null && echo -e "  ${YELLOW}⊘${NC} Removido npm:@tintinweb/pi-subagents (conflito)"
 pi remove "git:github.com/by-lua/lspec-subagents" 2>/dev/null
-pi remove "npm:@by-lua/lspec-subagents" 2>/dev/null
+pi remove "npm:bylua-lspec-subagents" 2>/dev/null
 
 # ── Passo 1: Instalar extensão via npm ──
 echo -e "${BLUE}→ Instalando @by-lua/lspec-subagents via npm...${NC}"
-pi install "npm:@by-lua/lspec-subagents" 2>/dev/null
+pi install "npm:bylua-lspec-subagents" 2>/dev/null
 echo -e "  ${GREEN}✓${NC} Extensão instalada (9 agentes L-Spec + /agents)"
 
 # ── Passo 2: Clonar e copiar .md de agentes ──
@@ -69,7 +69,7 @@ echo ""
 echo -e "${GREEN}✓ lspec-subagents instalado!${NC} ($agent_count .md agents | extensão @by-lua/lspec-subagents)"
 echo ""
 echo "Agentes: orchestrator | explorer | librarian | oracle | designer | fixer | observer | council | councillor"
-echo "Extensão: pi install npm:@by-lua/lspec-subagents"
+echo "Extensão: pi install npm:bylua-lspec-subagents"
 echo "Config:   ~/.pi/agent/lspec-model-config.json"
 echo "Atualizar: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash"
 echo "Desinstalar: curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/uninstall.sh | bash"
