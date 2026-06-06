@@ -1,8 +1,8 @@
 {
-  "name": "bylua-lspec-subagents",
-  "version": "1.0.3",
+  "name": "@by-lua/lspec-subagents",
+  "version": "1.0.4",
   "description": "L-Spec Subagents \u2014 9 specialized agents for PI.dev with centralized model config (inspired by oh-my-opencode-slim). Forked from @tintinweb/pi-subagents.",
-  "author": "Lua <noelia.assis@by-lua.com> (https://github.com/by-lua)",
+  "author": "Lua (https://github.com/by-lua)",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -45,6 +45,6 @@
     "extensions": [
       "./dist/index.js"
     ],
-    "image": "https://raw.githubusercontent.com/lua/lspec-subagents/main/media/screenshot.png"
+    "image": "https://raw.githubusercontent.com/by-lua/lspec-subagents/main/media/screenshot.png"
   }
 }
