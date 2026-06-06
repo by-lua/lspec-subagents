@@ -20,16 +20,17 @@ echo -e "${BLUE}║  lspec-subagents — Atualizar   ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════╝${NC}"
 echo ""
 
-# ── Reinstalar extensão ──
-echo -e "${BLUE}→ Reinstalando extensão...${NC}"
-if command -v pi &>/dev/null; then
-    pi remove "git:github.com/by-lua/lspec-subagents" 2>/dev/null
-    pi install "git:github.com/by-lua/lspec-subagents" 2>/dev/null
-else
+if ! command -v pi &>/dev/null; then
     echo -e "${RED}✗ PI não encontrado.${NC}"
     exit 1
 fi
-echo -e "  ${GREEN}✓${NC} Extensão atualizada"
+
+# ── Reinstalar extensão via npm ──
+echo -e "${BLUE}→ Reinstalando extensão...${NC}"
+pi remove "npm:@by-lua/lspec-subagents" 2>/dev/null
+pi remove "git:github.com/by-lua/lspec-subagents" 2>/dev/null
+pi install "npm:@by-lua/lspec-subagents" 2>/dev/null
+echo -e "  ${GREEN}✓${NC} Extensão atualizada (@by-lua/lspec-subagents)"
 
 # ── Reinstalar .md agents ──
 echo -e "${BLUE}→ Atualizando agent .md files...${NC}"
@@ -59,5 +60,5 @@ done
 rm -rf "$REPO_DIR"
 
 echo ""
-echo -e "${GREEN}✓ lspec-subagents atualizado!${NC} ($agent_count .md agents | extensão standalone)"
+echo -e "${GREEN}✓ lspec-subagents atualizado!${NC} ($agent_count .md agents | extensão @by-lua/lspec-subagents)"
 echo ""
