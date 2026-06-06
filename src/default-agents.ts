@@ -11,7 +11,16 @@
 
 import type { AgentConfig } from "./types.js";
 
-const READ_ONLY_TOOLS = ["read", "bash", "grep", "find", "ls"];
+const READ_ONLY_TOOLS = [
+  // Built-in PI.dev — navegação estrutural
+  "cymbal_map", "cymbal_search", "cymbal_outline", "cymbal_show",
+  "cymbal_refs", "cymbal_impact", "cymbal_importers", "cymbal_impls",
+  // Built-in PI.dev — precisão técnica (LSP)
+  "lsp_goto_definition", "lsp_find_references", "lsp_diagnostics",
+  "lsp_symbols", "lsp_rename",
+  // Fallback
+  "read", "bash", "grep", "find", "ls",
+];
 
 export const DEFAULT_AGENTS: Map<string, AgentConfig> = new Map([
   // ── Orchestrator ──────────────────────────────────────────────
@@ -123,9 +132,23 @@ export const DEFAULT_AGENTS: Map<string, AgentConfig> = new Map([
         "Quick contextual search for codebases. Answer \"Where is X?\", \"Find Y\", \"Which file has Z\".",
         "",
         "## When to Use Which Tools",
-        "- Text/regex patterns (strings, comments, variable names): grep",
-        "- File discovery (find by name/extension): glob patterns",
-        "- Reading specific files to show content: read",
+        "",
+        "**PI.dev built-in tools (preferir primeiro):**",
+        "- cymbal_map<dir> — estrutura do repo (arquivos, diretórios, módulos)",
+        "- cymbal_search <term> — buscar símbolos/texto em todo o código",
+        "- cymbal_outline <file> — symbols de um arquivo (classes, funções, métodos)",
+        "- cymbal_show <file:linha> — ler código por linha específica",
+        "- cymbal_refs <symbol> — referências a um símbolo",
+        "- cymbal_impact <symbol> — impacto a montante (upstream callers)",
+        "- lsp_goto_definition — ir para definição de símbolo",
+        "- lsp_find_references — referências cruzadas",
+        "- lsp_symbols <file> — lista símbolos de um arquivo",
+        "- lsp_diagnostics — erros/warnings do workspace",
+        "",
+        "**Fallback (se built-ins falharem):**",
+        "- Text/regex patterns: grep",
+        "- File discovery: glob patterns / find",
+        "- Reading specific files: read",
         "",
         "## Behavior",
         "- Be fast and thorough",
