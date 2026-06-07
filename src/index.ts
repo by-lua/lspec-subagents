@@ -24,6 +24,7 @@ import { GroupJoinManager } from "./group-join.js";
 import { resolveAgentInvocationConfig, resolveJoinMode } from "./invocation-config.js";
 import { type ModelRegistry, resolveModel } from "./model-resolver.js";
 import { loadModelConfig, saveModelForAgent } from "./model-config-loader.js";
+import { reloadModelConfig } from "./agent-types.js";
 import { createOutputFilePath, streamToOutputFile, writeInitialEntry } from "./output-file.js";
 import { SubagentScheduler } from "./schedule.js";
 import { resolveStorePath, ScheduleStore } from "./schedule-store.js";
@@ -1630,7 +1631,8 @@ Guidelines:
 
     // Step 3: Save to lspec-model-config.json
     saveModelForAgent(name, fullModel, "global");
-    reloadCustomAgents();
+    reloadModelConfig();
+    pi.events.emit("subagents:model_config_changed", { agent: name, model: fullModel });
     ctx.ui.notify(`${name} model changed to ${fullModel}`, "info");
   }
 
