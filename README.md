@@ -1,45 +1,45 @@
 # lspec-subagents
 
-**9 specialized sub-agents for PI.dev** — extensão standalone com modelo centralizado de configuração.
+**9 specialized sub-agents for PI.dev** — standalone extension with centralized configuration model.
 
-Inspirado no oh-my-opencode-slim. Fork do `@tintinweb/pi-subagents` — agentes padrão (general-purpose, Explore, Plan) **completamente removidos**, só os9 L-Spec existem.
+Inspired by oh-my-opencode-slim. Fork of `@tintinweb/pi-subagents` — default agents (general-purpose, Explore, Plan) **completely removed**, only the 9 L-Spec agents exist.
 
-## Instalação, Atualizar, Desinstalar
+## Install, Update, Uninstall
 
 ```bash
-# Instalar
+# Install
 pi install npm:@by-lua/lspec-subagents
 
-# Atualizar
+# Update
 pi update npm:@by-lua/lspec-subagents
 
-# Desinstalar
+# Uninstall
 pi uninstall npm:@by-lua/lspec-subagents
 ```
 
-> Alternativa (Git): `curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash`
+> Alternative (Git): `curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash`
 
-## Agentes
+## Agents
 
-- **orchestrator** — Coordenador central do fluxo L-Spec (`claude-sonnet-4`)
-- **explorer** — Navegação rápida no codebase, read-only (`gpt-4o-mini`)
-- **librarian** — Pesquisa de docs externas e APIs (`claude-sonnet-4`)
-- **oracle** — Arquiteto sênior, code review, read-only (`claude-opus-4`)
+- **orchestrator** — Central L-Spec workflow coordinator (`claude-sonnet-4`)
+- **explorer** — Fast codebase navigation, read-only (`gpt-4o-mini`)
+- **librarian** — External docs and APIs research (`claude-sonnet-4`)
+- **oracle** — Senior architect, code review, read-only (`claude-opus-4`)
 - **designer** — UI/UX specialist (`claude-sonnet-4`)
-- **fixer** — Implementador rápido de tarefas definidas (`claude-sonnet-4`)
-- **observer** — Análise visual (imagens, PDFs, screenshots) (`gpt-4o-mini`, vision-capable)
-- **council** — Consenso multi-modelo (spawna councillors) (`claude-opus-4`)
-- **councillor** — Membro individual do conselho (`gpt-4o-mini`)
+- **fixer** — Fast task implementation (`claude-sonnet-4`)
+- **observer** — Visual analysis (images, PDFs, screenshots) (`gpt-4o-mini`, vision-capable)
+- **council** — Multi-model consensus (spawns councillors) (`claude-opus-4`)
+- **councillor** — Individual council member (`gpt-4o-mini`)
 
-## Configuração Centralizada de Modelos
+## Centralized Model Configuration
 
-Modelos são **placeholders** (`{{model:orchestrator}}`) resolvidos em runtime via JSON.
+Models are **placeholders** (`{{model:orchestrator}}`) resolved at runtime via JSON.
 
-### Como configurar
+### How to configure
 
-Crie `lspec-model-config.json` em:
+Create `lspec-model-config.json` in:
 - **Global**: `~/.pi/agent/lspec-model-config.json`
-- **Projeto**: `.pi/lspec-model-config.json` (sobrescreve o global)
+- **Project**: `.pi/lspec-model-config.json` (overrides global)
 
 ```json
 {
@@ -57,56 +57,56 @@ Crie `lspec-model-config.json` em:
 }
 ```
 
-Pode usar qualquer modelo disponível no seu provedor. O observer precisa de um modelo com **visão**.
+You can use any model available from your provider. The observer requires a model with **vision**.
 
-### Ordem de resolução
+### Resolution order
 
-1. Projeto (`.pi/lspec-model-config.json`) — **maior prioridade**
+1. Project (`.pi/lspec-model-config.json`) — **highest priority**
 2. Global (`~/.pi/agent/lspec-model-config.json`)
-3. Defaults embutidos (claude-sonnet-4, gpt-4o-mini, claude-opus-4)
+3. Built-in defaults (claude-sonnet-4, gpt-4o-mini, claude-opus-4)
 
-## Como usar
+## How to use
 
-No PI, use o tool `Agent` com o tipo do agente:
+In PI, use the `Agent` tool with the agent type:
 
 ```
 Agent(agent_type="explorer", prompt="Find all React components in src/")
 Agent(agent_type="orchestrator", prompt="Run L-Spec Discovery for the auth feature")
 ```
 
-Ou customize agentes `.md` em `.pi/agents/` para sobrescrever os defaults.
+Or customize agent `.md` files in `.pi/agents/` to override defaults.
 
-## Diferenças do pi-subagents original
+## Differences from original pi-subagents
 
-- ✅ **9 agentes L-Spec** embutidos no código (não override por .md)
-- ✅ **Zero agentes padrão** — general-purpose/Explore/Plan removidos do source
-- ✅ **Placeholders de modelo** (`{{model:orchestrator}}`)
-- ✅ **Config JSON centralizada** (projeto + global + defaults)
-- ✅ **Fallback** mudou de `general-purpose` pra `orchestrator`
-- ✅ **Extensão standalone** — não depende do pacote npm @tintinweb
+- ✅ **9 L-Spec agents** built into code (not override by .md)
+- ✅ **Zero default agents** — general-purpose/Explore/Plan removed from source
+- ✅ **Model placeholders** (`{{model:orchestrator}}`)
+- ✅ **Centralized JSON config** (project + global + defaults)
+- ✅ **Fallback** changed from `general-purpose` to `orchestrator`
+- ✅ **Standalone extension** — does not depend on npm package @tintinweb
 
-## Instalação manual (sem npm)
+## Manual installation (without npm)
 
 ```bash
-pi install git:github.com/by-lua/lspec-subagents          # extensão standalone
+pi install git:github.com/by-lua/lspec-subagents          # standalone extension
 git clone --depth 1 https://github.com/by-lua/lspec-subagents.git /tmp/lspec-sub
 cp /tmp/lspec-sub/.pi/agents/*.md ~/.pi/agents/          # .md overrides
 cp /tmp/lspec-sub/lspec-model-config.example.json ~/.pi/agent/lspec-model-config.json
 rm -rf /tmp/lspec-sub
 ```
 
-## Atualizar / Desinstalar
+## Update / Uninstall
 
 ```bash
-# Atualizar
+# Update
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/update.sh | bash
 
-# Desinstalar
+# Uninstall
 curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/uninstall.sh | bash
 ```
 
-Remove extensão + 9 agent .md files. Preserva `lspec-model-config.json`.
+Removes extension + 9 agent .md files. Preserves `lspec-model-config.json`.
 
-## Licença
+## License
 
-MIT — fork de `@tintinweb/pi-subagents` (MIT).
+MIT — fork of `@tintinweb/pi-subagents` (MIT).
