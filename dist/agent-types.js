@@ -38,9 +38,11 @@ export function registerAgents(userAgents) {
 }
 /**
  * Reload the model config from disk (in case it changed since session start).
+ * Also re-resolves all model placeholders in the agent registry.
  */
 export function reloadModelConfig(cwd) {
     modelConfig = loadModelConfig(cwd ?? process.cwd());
+    resolveAllPlaceholders(agents, modelConfig);
 }
 /** Get the current model config (for UI display / debugging). */
 export function getModelConfig() {

@@ -19,6 +19,7 @@ export declare const BUILTIN_TOOL_NAMES: string[];
 export declare function registerAgents(userAgents: Map<string, AgentConfig>): void;
 /**
  * Reload the model config from disk (in case it changed since session start).
+ * Also re-resolves all model placeholders in the agent registry.
  */
 export declare function reloadModelConfig(cwd?: string): void;
 /** Get the current model config (for UI display / debugging). */

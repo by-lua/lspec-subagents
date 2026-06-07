@@ -48,9 +48,11 @@ export function registerAgents(userAgents: Map<string, AgentConfig>): void {
 
 /**
  * Reload the model config from disk (in case it changed since session start).
+ * Also re-resolves all model placeholders in the agent registry.
  */
 export function reloadModelConfig(cwd?: string): void {
   modelConfig = loadModelConfig(cwd ?? process.cwd());
+  resolveAllPlaceholders(agents, modelConfig);
 }
 
 /** Get the current model config (for UI display / debugging). */
