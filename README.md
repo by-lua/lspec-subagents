@@ -8,13 +8,13 @@ Inspirado no oh-my-opencode-slim. Fork do `@tintinweb/pi-subagents` — agentes 
 
 ```bash
 # Instalar
-pi install npm:bylua-lspec-subagents
+pi install npm:@by-lua/lspec-subagents
 
 # Atualizar
-pi update npm:bylua-lspec-subagents
+pi update npm:@by-lua/lspec-subagents
 
 # Desinstalar
-pi uninstall npm:bylua-lspec-subagents
+pi uninstall npm:@by-lua/lspec-subagents
 ```
 
 > Alternativa (Git): `curl -fsSL https://raw.githubusercontent.com/by-lua/lspec-subagents/main/install.sh | bash`
