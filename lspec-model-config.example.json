@@ -4,14 +4,14 @@
   "_override_order": "project > global > embedded defaults",
   "_usage": "Each entry maps an agent role to a model string. Format: 'provider/modelId' or just 'modelId'. Mix and match providers freely.",
   "agents": {
-    "orchestrator": "claude-sonnet-4",
+    "orchestrator": "ominiroute/CODING-ADVANCED",
     "explorer": "gpt-4o-mini",
     "librarian": "claude-sonnet-4",
     "oracle": "claude-opus-4",
     "designer": "claude-sonnet-4",
-    "fixer": "codex",
+    "fixer": "CODING-ELITE",
     "observer": "gpt-4o-mini",
     "council": "claude-opus-4",
-    "councillor": "grok-2"
+    "councillor": "gpt-4o-mini"
   }
 }
