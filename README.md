@@ -59,6 +59,8 @@ Create `lspec-model-config.json` in:
 
 You can use any model available from your provider. The observer requires a model with **vision**.
 
+> 💡 **Tip:** After changing a model in the **"Agent types" UI**, run `/reload` in the PI chat to apply the change — this forces the agents list to re-read the model config.
+
 ### Resolution order
 
 1. Project (`.pi/lspec-model-config.json`) — **highest priority**
