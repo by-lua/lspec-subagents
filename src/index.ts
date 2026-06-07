@@ -1375,6 +1375,7 @@ Guidelines:
 
   async function showAgentsMenu(ctx: ExtensionCommandContext) {
     reloadCustomAgents();
+    reloadModelConfig();
     const allNames = getAllTypes();
 
     // Build select options

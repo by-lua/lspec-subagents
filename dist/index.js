@@ -1223,6 +1223,7 @@ Guidelines:
     }
     async function showAgentsMenu(ctx) {
         reloadCustomAgents();
+        reloadModelConfig();
         const allNames = getAllTypes();
         // Build select options
         const options = [];
