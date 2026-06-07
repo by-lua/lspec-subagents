@@ -2,7 +2,7 @@
   "name": "@by-lua/lspec-subagents",
   "version": "1.0.4",
   "description": "L-Spec Subagents \u2014 9 specialized agents for PI.dev with centralized model config (inspired by oh-my-opencode-slim). Forked from @tintinweb/pi-subagents.",
-  "author": "Lua (https://github.com/by-lua)",
+  "author": "Lua <noelia.assis@outlook.com> (https://github.com/by-lua)",
   "license": "MIT",
   "repository": {
     "type": "git",
